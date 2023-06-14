@@ -1,0 +1,85 @@
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+
+export default function Create() {
+
+    const [title, setTitle] = useState("");
+    const [listItems, setListItems] = useState([]);
+
+    // Form function
+    // Add title to database
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        console.log(title);
+
+        try {
+
+            const res = await axios.post("http://localhost:8080/api/v1/blogs/create-blog", { title });
+
+            if (res.data.success) {
+                alert("Blog created");
+
+            }
+
+            else {
+                alert("bla bla bla")
+            }
+
+        }
+
+        catch (error) {
+            console.log(error);
+            alert("Something went wrong");
+        }
+    }
+
+    // create function to fetch all todo items from database -- here we will use useEffect hook
+    useEffect(() => {
+        const getItemList = async () => {
+            try {
+
+                const res = await axios.get("http://localhost:8080/api/v1/blogs/all-blog")
+                console.log(res.data);
+
+            for (let index = 0; index < 3; index++) {
+                document.getElementById("demo").innerHTML = res.data.blogs[index].title;
+
+            }
+
+
+            }
+
+            catch (error) {
+                console.log(error);
+            }
+        }
+
+        getItemList();
+
+    }, [])
+
+
+
+
+
+
+    return (
+        <div>
+
+            <form action="" onSubmit={handleSubmit}>
+
+                <input type="text" placeholder='Add your Title here' value={title} onChange={(e) => setTitle(e.target.value)} />
+                <button type="submit" className="btn btn-primary">Add Blog</button>
+
+            </form>
+
+            <div className="display">
+                <div className="items">
+                    <p className='display-title' id='demo'> </p>
+                </div>
+            </div>
+
+        </div>
+    )
+}
